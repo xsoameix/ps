@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <math.h>
 #include <errno.h>
 #include <netinet/in.h>
 #include <gtk/gtk.h>
@@ -125,8 +126,9 @@ gtk_drawing_area_update(GtkWidget * area, cairo_t * cr, gpointer data) {
     cairo_show_text(cr, num);
     cairo_show_text(cr, " °C");
     cairo_set_font_size(cr, 24);
-    cairo_move_to(cr, 140, 140);
-    cairo_show_text(cr, "power is ");
+    cairo_move_to(cr, 120, 140);
+    cairo_show_text(cr, "The power is ");
+    cairo_rotate(cr, M_PI / 8);
     if ((uintptr_t) result % 2) {
       cairo_set_source_rgba(cr, 0.6, 0, 0, 1);
       cairo_show_text(cr, "off");
@@ -193,7 +195,11 @@ main(int argc, char * argv[]) {
   GtkWidget * menubar = gtk_menu_bar_new();
   gtk_menu_shell_append(GTK_MENU_SHELL(menubar),
                         gtk_room_menu_item_new(data));
+#if GTK_MINOR_VERSION >= 12
+  gtk_widget_set_margin_start(menubar, 10);
+#else
   gtk_widget_set_margin_left(menubar, 10);
+#endif
 
   GtkWidget * vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
   gtk_box_pack_start(GTK_BOX(vbox), menubar, FALSE, FALSE, 0);
